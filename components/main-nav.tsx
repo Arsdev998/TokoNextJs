@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Home, HomeIcon, Settings } from "lucide-react";
+import { Home, HomeIcon, NotebookIcon, Settings } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
@@ -23,6 +23,12 @@ export function MainNav({
       label: "Settings",
       icon: <Settings className="w-4 h-4" />,
       active: pathname === `/${params.storeId}/settings`,
+    },
+    {
+      href: `/${params.storeId}/banner`,
+      label: "Banner",
+      icon: <NotebookIcon className="w-4 h-4" />,
+      active: pathname === `/${params.storeId}/banner`,
     },
   ];
   return (

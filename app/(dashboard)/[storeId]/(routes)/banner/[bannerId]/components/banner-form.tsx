@@ -12,11 +12,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useOrigin } from "@/hooks/useOrigin";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Store } from "@prisma/client";
+import { Banner } from "@prisma/client";
 import axios from "axios";
 import { Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -25,29 +26,43 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
-interface SettingsFormProps {
-  initinalData: Store;
+interface BannerFormProps {
+  initinalData: Banner | null;
 }
 
 const formSchema = z.object({
-  name: z.string().min(1, {
-    message: "Nama Store tidak boleh kosong",
+  label: z.string().min(1, {
+    message: "label tidak boleh kosong",
+  }),
+  imageUrl: z.string().min(1, {
+    message: "imageUrl tidak boleh kosong",
   }),
 });
 
-type SettingsFormValues = z.infer<typeof formSchema>;
-export const SettingsForm: React.FC<SettingsFormProps> = ({ initinalData }) => {
+type BannerFormValues = z.infer<typeof formSchema>;
+export const BannerForm: React.FC<BannerFormProps> = ({ initinalData }) => {
   const params = useParams();
   const router = useRouter();
   const origin = useOrigin();
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const form = useForm<SettingsFormValues>({
+
+  const title = initinalData ? "Edit Banner" : "Buat Banner";
+  const description = initinalData ? "Edit Banner Store" : "Buat Banner Store";
+  const toastMessage = initinalData
+    ? "Banner Berhasil diupdate"
+    : "Banner Berhasil Dibuat";
+  const action = initinalData ? "Simpan Banner" : "Buat Banner";
+
+  const form = useForm<BannerFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initinalData,
+    defaultValues: initinalData || {
+      label: "",
+      imageUrl: "",
+    },
   });
 
-  const onSubmit = async (data: SettingsFormValues) => {
+  const onSubmit = async (data: BannerFormValues) => {
     try {
       setLoading(true);
       await axios.patch(`/api/stores/${params.storeId}`, data);
@@ -85,15 +100,17 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initinalData }) => {
         loading={loading}
       />
       <div className="flex items-center justify-between">
-        <Heading title="Settings" description="Management Store " />
-        <Button
-          disabled={loading}
-          variant={"destructive"}
-          size={"sm"}
-          onClick={() => setOpen(true)}
-        >
-          <Trash className="w-4 h-4" />
-        </Button>
+        <Heading title={title} description={description} />
+        {initinalData && (
+          <Button
+            disabled={loading}
+            variant={"destructive"}
+            size={"sm"}
+            onClick={() => setOpen(true)}
+          >
+            <Trash className="w-4 h-4" />
+          </Button>
+        )}
       </div>
       <Separator />
       <Form {...form}>
@@ -104,13 +121,13 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initinalData }) => {
           <div className="grid grid-cols-3 gap-8">
             <FormField
               control={form.control}
-              name="name"
+              name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nama Store</FormLabel>
+                  <FormLabel>Label</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Nama Store"
+                      placeholder="Label"
                       disabled={loading}
                       {...field}
                       className="w-[250px]"
@@ -120,18 +137,32 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initinalData }) => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="imageUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image</FormLabel>
+                  <FormControl>
+                    <ImageUpload
+                      disabled={loading}
+                      onChange={(url) => field.onChange(url)}
+                      onRemove={() => field.onChange("")}
+                      value={field.value ? [field.value] : []}
+                    />
+                    
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <Button disabled={loading} type="submit">
-            Save
+            {action}
           </Button>
         </form>
       </Form>
       <Separator />
-      <ApiAlert
-        title="PUBLIC API/URL"
-        description={`${origin}/api/${params.storeId}`}
-        variant="public"
-      />
     </>
   );
 };

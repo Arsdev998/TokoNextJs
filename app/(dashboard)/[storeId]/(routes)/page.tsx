@@ -1,5 +1,4 @@
 import db from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
 
 interface DashboardProps {
   params: { storeId: string };
