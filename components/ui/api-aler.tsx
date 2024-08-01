@@ -16,7 +16,7 @@ const textMap: Record<ApiAlertProps["variant"], string> = {
 };
 
 const variantMap: Record<ApiAlertProps["variant"], BadgeProps["variant"]> = {
-  public: "seconddary",
+  public: "secondary",
   admin: "destructive",
 };
 

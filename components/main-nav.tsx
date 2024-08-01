@@ -19,16 +19,16 @@ export function MainNav({
       active: pathname === `/${params.storeId}`,
     },
     {
+      href: `/${params.storeId}/banner`,
+      label: "Banners",
+      icon: <NotebookIcon className="w-4 h-4" />,
+      active: pathname === `/${params.storeId}/banner`,
+    },
+    {
       href: `/${params.storeId}/settings`,
       label: "Settings",
       icon: <Settings className="w-4 h-4" />,
       active: pathname === `/${params.storeId}/settings`,
-    },
-    {
-      href: `/${params.storeId}/banner`,
-      label: "Banner",
-      icon: <NotebookIcon className="w-4 h-4" />,
-      active: pathname === `/${params.storeId}/banner`,
     },
   ];
   return (

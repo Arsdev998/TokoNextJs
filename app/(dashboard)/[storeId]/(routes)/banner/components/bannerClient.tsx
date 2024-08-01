@@ -5,15 +5,21 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
+import { BannerColumn, columns } from "./column";
+import { DataTable } from "@/components/ui/data-table";
 
-export const BannerClient = () => {
+interface BannerClientProps {
+  data: BannerColumn[]
+}
+
+export const BannerClient: React.FC<BannerClientProps> = ({data}) => {
     const router = useRouter()
     const params = useParams()
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title="Banner"
+          title={`Banner (${data.length})`}
           description="Tambahkan dan atur banner untuk Store"
         />
         <Button onClick={()=>router.push(`/${params.storeId}/banner/new}`)}>
@@ -22,6 +28,7 @@ export const BannerClient = () => {
         </Button>
       </div>
       <Separator/>
+      <DataTable data={data} columns={columns} searchKey="label"/>
     </>
   );
 };

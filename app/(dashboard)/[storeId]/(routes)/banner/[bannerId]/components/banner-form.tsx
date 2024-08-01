@@ -43,7 +43,6 @@ type BannerFormValues = z.infer<typeof formSchema>;
 export const BannerForm: React.FC<BannerFormProps> = ({ initinalData }) => {
   const params = useParams();
   const router = useRouter();
-  const origin = useOrigin();
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -65,9 +64,14 @@ export const BannerForm: React.FC<BannerFormProps> = ({ initinalData }) => {
   const onSubmit = async (data: BannerFormValues) => {
     try {
       setLoading(true);
-      await axios.patch(`/api/stores/${params.storeId}`, data);
+      if(initinalData) {
+        await axios.patch(`/api/${params.storeId}/banners/${params.bannerId}`, data);
+      }else{
+        await axios.post(`/api/${params.storeId}/banners`, data);
+      }
       router.refresh();
-      toast.success("Store Berhasil diupdate");
+      router.push(`/${params.storeId}/banner`);
+      toast.success(toastMessage);
     } catch (error) {
       toast.error("cek kembali data yang diInput");
     } finally {
@@ -78,13 +82,13 @@ export const BannerForm: React.FC<BannerFormProps> = ({ initinalData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/stores/${params.storeId}`);
+      await axios.delete(`/api/${params.storeId}/banners/${params.bannerId}`);
       router.refresh();
       router.push("/");
-      toast.success("Store Berhasil dihapus");
+      toast.success("Banner Berhasil dihapus");
     } catch (error) {
       console.log(error);
-      toast.error("Gagal menghapus store");
+      toast.error("Gagal menghapus Banners");
     } finally {
       setLoading(false);
       setOpen(false);

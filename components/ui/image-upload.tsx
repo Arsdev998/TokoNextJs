@@ -11,7 +11,6 @@ interface ImageUploadProps {
   onChange: (value: string) => void;
   onRemove: (value: string) => void;
   value: string[];
-  label: string;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -19,7 +18,6 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   onChange,
   onRemove,
   value,
-  label,
 }) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
   useEffect(() => {
