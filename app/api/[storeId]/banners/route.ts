@@ -57,18 +57,18 @@ export async function GET(
 ) {
   try {
     if (!params.storeId) {
-      return new NextResponse("storeId not found", { status: 400 });
+      return new NextResponse("Store id URL dibutuhkan");
     }
 
-    const banners = await db.banner.findMany({
-     where: {
+    const banner = await db.banner.findMany({
+      where: {
         storeId: params.storeId,
-     }
+      },
     });
 
-    return NextResponse.json(banners);
+    return NextResponse.json(banner);
   } catch (error) {
-    console.log("[BANNER-GET]", error);
+    console.log("[BANNERS_GET]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }

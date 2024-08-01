@@ -1,7 +1,6 @@
 "use client";
 
 import { AlertModal } from "@/components/modals/alert-modal";
-import { ApiAlert } from "@/components/ui/api-aler";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,9 +14,8 @@ import { Heading } from "@/components/ui/heading";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useOrigin } from "@/hooks/useOrigin";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Banner } from "@prisma/client";
+import { Category } from "@prisma/client";
 import axios from "axios";
 import { Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -26,42 +24,42 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
-interface BannerFormProps {
-  initinalData: Banner | null;
+interface CategoriesProps {
+  initinalData: Category | null;
 }
 
 const formSchema = z.object({
-  label: z.string().min(1, {
-    message: "label tidak boleh kosong",
+  name: z.string().min(1, {
+    message: "name tidak boleh kosong",
   }),
-  imageUrl: z.string().min(1, {
+ bannerId: z.string().min(1, {
     message: "imageUrl tidak boleh kosong",
   }),
 });
 
-type BannerFormValues = z.infer<typeof formSchema>;
-export const BannerForm: React.FC<BannerFormProps> = ({ initinalData }) => {
+type CategoriesValues = z.infer<typeof formSchema>;
+export const CategoriesForm: React.FC<CategoriesProps> = ({ initinalData }) => {
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const title = initinalData ? "Edit Banner" : "Buat Banner";
-  const description = initinalData ? "Edit Banner Store" : "Buat Banner Store";
+  const title = initinalData ? "Edit Category" : "Buat Category";
+  const description = initinalData ? "Edit Category Store" : "Buat Category Store";
   const toastMessage = initinalData
-    ? "Banner Berhasil diupdate"
-    : "Banner Berhasil Dibuat";
-  const action = initinalData ? "Simpan Banner" : "Buat Banner";
+    ? "Category Berhasil diupdate"
+    : "Category Berhasil Dibuat";
+  const action = initinalData ? "Simpan Category" : "Buat Category";
 
-  const form = useForm<BannerFormValues>({
+  const form = useForm<CategoriesValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initinalData || {
-      label: "",
-      imageUrl: "",
+      name: "",
+      bannerId: "",
     },
   });
 
-  const onSubmit = async (data: BannerFormValues) => {
+  const onSubmit = async (data: CategoriesValues) => {
     try {
       setLoading(true);
       if(initinalData) {
@@ -125,36 +123,17 @@ export const BannerForm: React.FC<BannerFormProps> = ({ initinalData }) => {
           <div className="grid grid-cols-3 gap-8">
             <FormField
               control={form.control}
-              name="label"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Label</FormLabel>
+                  <FormLabel>Nama</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Label"
+                      placeholder="Nama category"
                       disabled={loading}
                       {...field}
                       className="w-[250px]"
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="imageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Image</FormLabel>
-                  <FormControl>
-                    <ImageUpload
-                      disabled={loading}
-                      onChange={(url) => field.onChange(url)}
-                      onRemove={() => field.onChange("")}
-                      value={field.value ? [field.value] : []}
-                    />
-                    
                   </FormControl>
                   <FormMessage />
                 </FormItem>
