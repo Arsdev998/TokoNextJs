@@ -11,11 +11,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
-import { ImageUpload } from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Category } from "@prisma/client";
+import { Banner, Category } from "@prisma/client";
 import axios from "axios";
 import { Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -26,26 +26,29 @@ import { z } from "zod";
 
 interface CategoriesProps {
   initinalData: Category | null;
+  banners : Banner[]
 }
 
 const formSchema = z.object({
   name: z.string().min(1, {
     message: "name tidak boleh kosong",
   }),
- bannerId: z.string().min(1, {
+  bannerId: z.string().min(1, {
     message: "imageUrl tidak boleh kosong",
   }),
 });
 
 type CategoriesValues = z.infer<typeof formSchema>;
-export const CategoriesForm: React.FC<CategoriesProps> = ({ initinalData }) => {
+export const CategoriesForm: React.FC<CategoriesProps> = ({ initinalData ,banners}) => {
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const title = initinalData ? "Edit Category" : "Buat Category";
-  const description = initinalData ? "Edit Category Store" : "Buat Category Store";
+  const description = initinalData
+    ? "Edit Category Store"
+    : "Buat Category Store";
   const toastMessage = initinalData
     ? "Category Berhasil diupdate"
     : "Category Berhasil Dibuat";
@@ -62,13 +65,16 @@ export const CategoriesForm: React.FC<CategoriesProps> = ({ initinalData }) => {
   const onSubmit = async (data: CategoriesValues) => {
     try {
       setLoading(true);
-      if(initinalData) {
-        await axios.patch(`/api/${params.storeId}/banners/${params.bannerId}`, data);
-      }else{
-        await axios.post(`/api/${params.storeId}/banners`, data);
+      if (initinalData) {
+        await axios.patch(
+          `/api/${params.storeId}/categories/${params.categoryId}`,
+          data
+        );
+      } else {
+        await axios.post(`/api/${params.storeId}/categories`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/banner`);
+      router.push(`/${params.storeId}/categories`);
       toast.success(toastMessage);
     } catch (error) {
       toast.error("cek kembali data yang diInput");
@@ -80,13 +86,13 @@ export const CategoriesForm: React.FC<CategoriesProps> = ({ initinalData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/banners/${params.bannerId}`);
+      await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`);
       router.refresh();
-      router.push(`/${params.storeId}/banner`);
-      toast.success("Banner Berhasil dihapus");
+      router.push(`/${params.storeId}/categories`);
+      toast.success("Category Berhasil dihapus");
     } catch (error) {
       console.log(error);
-      toast.error("Gagal menghapus Banners");
+      toast.error("Gagal menghapus Category");
     } finally {
       setLoading(false);
       setOpen(false);
@@ -134,6 +140,37 @@ export const CategoriesForm: React.FC<CategoriesProps> = ({ initinalData }) => {
                       {...field}
                       className="w-[250px]"
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="bannerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Banner</FormLabel>
+                  <FormControl>
+                    <Select
+                      disabled={loading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue defaultValue={field.value} placeholder="Pilih Banner"/>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {banners.map((banner) => (
+                         <SelectItem key={banner.id} value={banner.id}>
+                          {banner.label}
+                         </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
