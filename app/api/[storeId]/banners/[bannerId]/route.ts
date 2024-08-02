@@ -11,7 +11,7 @@ export async function GET(
     if (!params.bannerId) {
       return new NextResponse("banner Id dibutuhkan", { status: 400 });
     }
-    const banner = await db.store.findUnique({
+    const banner = await db.banner.findUnique({
       where: {
         id: params.bannerId,
       },

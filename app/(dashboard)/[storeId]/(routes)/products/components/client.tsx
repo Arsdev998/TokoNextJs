@@ -32,7 +32,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({data}) => {
       <DataTable data={data} columns={columns} searchKey="name"/>
       <Heading title="API" description="API untuk Products"/>
       <Separator/>
-      <ApiList idIndikator="ProductId" namaIndikator="Products"/>
+      <ApiList idIndikator="productId" namaIndikator="products"/>
     </>
   );
 };
