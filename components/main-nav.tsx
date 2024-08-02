@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { HomeIcon, NotebookIcon, Settings, Tags } from "lucide-react";
+import { HomeIcon, NotebookIcon, Settings, ShoppingBagIcon, Tags } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
@@ -19,6 +19,12 @@ export function MainNav({
       active: pathname === `/${params.storeId}`,
     },
     {
+      href: `/${params.storeId}/products`,
+      label: "Products",
+      icon: <ShoppingBagIcon className="h-4 w-4"/>,
+      active: pathname === `/${params.storeId}/products`,
+    },
+    {
       href: `/${params.storeId}/banner`,
       label: "Banners",
       icon: <NotebookIcon className="w-4 h-4" />,
@@ -28,7 +34,7 @@ export function MainNav({
       href: `/${params.storeId}/categories`,
       label: "Categories",
       icon: <Tags className="w-4 h-4" />,
-      active: pathname === `/${params.storeId}/settings`,
+      active: pathname === `/${params.storeId}/categories`,
     },
     {
       href: `/${params.storeId}/settings`,
