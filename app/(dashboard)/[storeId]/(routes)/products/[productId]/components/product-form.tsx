@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
-import { ImageUpload } from "@/components/ui/image-upload";
+import ImageUpload from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Category, Image, Product } from "@prisma/client";
+import {  Category, Image, Product } from "@prisma/client";
 import axios from "axios";
 import { Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -131,6 +131,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       setOpen(false);
     }
   };
+
+  
+  
 
   return (
     <>
@@ -267,9 +270,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Featured
-                    </FormLabel>
+                    <FormLabel>Featured</FormLabel>
                     <FormDescription>
                       Produk ini akan muncul di Home page
                     </FormDescription>
@@ -289,9 +290,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Archived
-                    </FormLabel>
+                    <FormLabel>Archived</FormLabel>
                     <FormDescription>
                       Produk ini akan disembunyikan
                     </FormDescription>

@@ -10,36 +10,41 @@ export async function POST(
     const { userId } = auth();
     const body = await req.json();
 
-    const { name,price,categoryId,images,isFeatured,isArchived } = body;
+    const { name, price, categoryId, images, isFeatured, isArchived } = body;
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+
     if (!name) {
-      return new NextResponse("Nama Product perlu diinput", { status: 400 });
+      return new NextResponse("Nama perlu diinput", { status: 400 });
     }
-    if (!images || images.length === 0) {
+
+    if (!images || !images.length) {
       return new NextResponse("Image perlu diinput", { status: 400 });
     }
-     if (!price) {
-       return new NextResponse("harga Product perlu diinput", { status: 400 });
-     }
-     if (!categoryId) {
-       return new NextResponse("Kategory Product perlu diinput", { status: 400 });
-     }
+
+    if (!price) {
+      return new NextResponse("Harga perlu diinput", { status: 400 });
+    }
+
+    if (!categoryId) {
+      return new NextResponse("Kategori perlu diinput", { status: 400 });
+    }
+
     if (!params.storeId) {
-      return new NextResponse("storeId not found", { status: 400 });
+      return new NextResponse("Store id URL dibutuhkan");
     }
 
     const storeByUserId = await db.store.findFirst({
-        where:{
-            id: params.storeId,
-            userId
-        }
-    }) 
+      where: {
+        id: params.storeId,
+        userId,
+      },
+    });
 
-    if(!storeByUserId){
-        return new NextResponse("Unatuhorized", { status: 403 });
+    if (!storeByUserId) {
+      return new NextResponse("Unauthorized", { status: 403 });
     }
 
     const product = await db.product.create({
@@ -50,23 +55,20 @@ export async function POST(
         isFeatured,
         isArchived,
         storeId: params.storeId,
-        images:{
-          createMany:{
-            data:[
-              ...images.map((image:{url:string}) => image),
-            ]
-          }
-        }
+        images: {
+          createMany: {
+            data: [...images.map((image: { url: string }) => image)],
+          },
+        },
       },
     });
 
     return NextResponse.json(product);
   } catch (error) {
-    console.log("[PRODUCTS-POST]", error);
+    console.log("[PRODUCTS_POST]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }
-
 export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
@@ -74,7 +76,7 @@ export async function GET(
   try {
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get("categoryId") || undefined;
-    const isFeatured = searchParams.get("isFeatured")
+    const isFeatured = searchParams.get("isFeatured");
 
     if (!params.storeId) {
       return new NextResponse("Store id URL dibutuhkan");
@@ -85,7 +87,7 @@ export async function GET(
         storeId: params.storeId,
         categoryId,
         isFeatured: isFeatured ? true : undefined,
-        isArchived:false
+        isArchived: false,
       },
       include: {
         images: true,
@@ -93,8 +95,9 @@ export async function GET(
       },
       orderBy: {
         createdAt: "desc",
-      }
+      },
     });
+
     return NextResponse.json(products);
   } catch (error) {
     console.log("[PRODUCTS_GET]", error);

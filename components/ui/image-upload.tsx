@@ -13,13 +13,14 @@ interface ImageUploadProps {
   value: string[];
 }
 
-export const ImageUpload: React.FC<ImageUploadProps> = ({
+const ImageUpload: React.FC<ImageUploadProps> = ({
   disabled,
   onChange,
   onRemove,
   value,
 }) => {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -28,10 +29,12 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     onChange(result.info.secure_url);
   };
 
-  if (!isMounted) return null;
+  if (!isMounted) {
+    return null;
+  }
 
   return (
-    <div className="">
+    <div>
       <div className="mb-4 flex items-center gap-4">
         {value.map((url) => (
           <div
@@ -40,29 +43,38 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           >
             <div className="z-10 absolute top-2 right-2">
               <Button
+                type="button"
                 onClick={() => onRemove(url)}
-                variant={"destructive"}
-                size={"icon"}
+                variant="destructive"
+                size="icon"
               >
-                <Trash className="w-4 h-4" />
+                <Trash className="h-4 w-4" />
               </Button>
             </div>
-            <Image fill className="object-cover" src={url} alt="Image" />
+            <Image fill className="object-cover" alt="Image" src={url} />
           </div>
         ))}
       </div>
-      <CldUploadWidget onSuccess={onUpload} uploadPreset="cym2lcor">
+      <CldUploadWidget onUpload={onUpload} uploadPreset="cym2lcor">
         {({ open }) => {
-          const onClick = () => open();
-
+          const onClick = () => {
+            open();
+          };
           return (
-            <Button type="button" disabled={disabled} onClick={onClick} variant="secondary">
-                <ImagePlus className="h-4 w-4 mr-2"/>
-                Upload Image
+            <Button
+              type="button"
+              disabled={disabled}
+              variant="secondary"
+              onClick={onClick}
+            >
+              <ImagePlus className="h-4 w-4 mr-2" />
+              Upload image
             </Button>
-          )
+          );
         }}
       </CldUploadWidget>
     </div>
   );
 };
+
+export default ImageUpload;
